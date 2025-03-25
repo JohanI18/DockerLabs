@@ -149,5 +149,3 @@ Una vez con acceso como root, se pueden realizar las siguientes acciones:
 - 🧹 Eliminación de huellas  
 - 💣 Destrucción del sistema (opcional y maliciosa)
 ```
-
-¿Te gustaría que también lo exporte como archivo `.md`?

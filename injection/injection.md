@@ -148,4 +148,3 @@ Una vez con acceso como root, se pueden realizar las siguientes acciones:
 - 🔀 Pivoting hacia otras máquinas  
 - 🧹 Eliminación de huellas  
 - 💣 Destrucción del sistema (opcional y maliciosa)
-```

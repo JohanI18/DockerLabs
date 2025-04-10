@@ -29,7 +29,7 @@ PORT    STATE SERVICE      REASON
 ## 3. 🔎 Detección de Versiones de Servicios
 
 ```bash
-nmap -p22,80 -sCV 172.17.0.2
+nmap -p22,80,139,445 -sCV 172.17.0.2
 ```
 
 | Puerto | Servicio                        |

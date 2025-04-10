@@ -48,6 +48,29 @@ nmap -p22,80 -sCV 172.17.0.2
 enum4linux -a 172.17.0.2
 ```
 
+| Parte del Comando                     | Descripción                                                                 |
+|--------------------------------------|-----------------------------------------------------------------------------|
+| `enum4linux`                         | Herramienta de enumeración para servicios SMB (usa herramientas como smbclient, rpcclient, etc). |
+| `-a`                                 | Ejecuta **todas las pruebas disponibles**. Es equivalente a usar varias opciones combinadas. |
+| `172.17.0.2`                         | Dirección IP del objetivo a escanear.                                       |
+
+---
+
+Y esta es una tabla con **las funciones que ejecuta internamente** al usar `-a`:
+
+| Función Interna                       | Herramienta Usada | Descripción                                                                 |
+|--------------------------------------|-------------------|-----------------------------------------------------------------------------|
+| Enumerar información del sistema     | `nmblookup`, `smbclient` | Obtiene el nombre NetBIOS, dominio, y más.                                  |
+| Enumerar usuarios del sistema        | `rpcclient`, `samrdump`  | Lista de usuarios (ej. `dylan`, `guest`, etc).                              |
+| Enumerar grupos                      | `rpcclient`        | Intenta listar los grupos y sus miembros.                                   |
+| Recursos compartidos (shares)       | `smbclient`, `rpcclient` | Muestra los discos y carpetas compartidas (`shared`, `IPC$`, `print$`, etc).|
+| Enumerar políticas de contraseñas    | `rpcclient`        | Reglas de contraseñas (longitud mínima, historial, etc).                    |
+| RID Brute Force                      | `rpcclient`        | Intenta descubrir usuarios usando rangos de RID (como 500-550, 1000-1050).  |
+| Listado de grupos locales            | `rpcclient`        | Obtiene grupos del sistema y sus miembros.                                  |
+| Enumeración de la red               | `nmblookup`, `nbtscan`  | Muestra otras máquinas en el dominio o red si es posible.                   |
+
+---
+
 ✅ Usuario descubierto: `dylan`  
 ✅ Recursos compartidos visibles:
 
@@ -73,6 +96,15 @@ IPC$            IPC       IPC Service (Samba, Ubuntu)
 smbclient -L //172.17.0.2 -N
 ```
 
+| Parte del Comando                     | Significado                                                                 |
+|--------------------------------------|-----------------------------------------------------------------------------|
+| `smbclient`                          | Cliente SMB en modo línea de comandos, similar a un cliente FTP pero para SMB. |
+| `-L`                                 | Opción para **listar los recursos compartidos** en el host remoto.          |
+| `//172.17.0.2`                       | Ruta SMB del objetivo (protocolo //IP).                                     |
+| `-N`                                 | Se conecta **sin necesidad de autenticación** (sin usuario ni contraseña).  |
+
+---
+
 Mismos recursos detectados. El protocolo SMB1 no está habilitado.
 
 ---
@@ -83,6 +115,11 @@ Mismos recursos detectados. El protocolo SMB1 no está habilitado.
 smbmap -H 172.17.0.2
 ```
 
+| Parte del Comando        | Descripción                                                                 |
+|--------------------------|-----------------------------------------------------------------------------|
+| `smbmap`                 | Herramienta para enumerar recursos SMB y sus permisos.                     |
+| `-H 172.17.0.2`          | IP del host objetivo al que se desea conectarse y enumerar los recursos.   |
+
 Todos los recursos aparecen como `NO ACCESS`.
 
 ---
@@ -92,6 +129,13 @@ Todos los recursos aparecen como `NO ACCESS`.
 ```bash
 rpcclient -U "" -N 172.17.0.2
 ```
+
+| Parte del Comando           | Descripción                                                                 |
+|-----------------------------|-----------------------------------------------------------------------------|
+| `rpcclient`                 | Herramienta para interactuar con servicios RPC de sistemas Windows/Linux.  |
+| `-U ""`                     | Indica un **usuario vacío** (sin autenticación).                            |
+| `-N`                        | Se conecta **sin contraseña**.                                              |
+| `172.17.0.2`                | Dirección IP del objetivo.                                                  |
 
 Enumeración de usuarios:
 
@@ -108,6 +152,14 @@ Consulta de usuario `501` (`nobody`) no proporciona información útil.
 ```bash
 crackmapexec smb 172.17.0.2 --users users.txt --continue-on-success
 ```
+
+| Parte del Comando                            | Descripción                                                                 |
+|----------------------------------------------|-----------------------------------------------------------------------------|
+| `crackmapexec`                               | Herramienta para evaluar servicios SMB, RDP, WinRM, etc.                   |
+| `smb`                                        | Especifica el módulo/protocolo a usar: en este caso, SMB.                  |
+| `172.17.0.2`                                 | IP del objetivo.                                                           |
+| `--users users.txt`                          | Archivo con nombres de usuario a probar.                                   |
+| `--continue-on-success`                      | Continúa ejecutando pruebas incluso si una autenticación tiene éxito.      |
 
 ✅ Usuario encontrado: `dylan`
 
@@ -151,6 +203,16 @@ sqlmap -u http://172.17.0.2/index.php --forms -D register -T users --dump --batc
 
 ## 6. 🔓 Acceso a SMB
 
+```bash
+smbclient //172.17.0.2/shared -U dylan
+```
+
+| Parte del Comando               | Descripción                                                                 |
+|---------------------------------|-----------------------------------------------------------------------------|
+| `smbclient`                     | Cliente SMB interactivo, similar a FTP, para acceder a recursos compartidos.|
+| `//172.17.0.2/shared`           | Ruta del recurso compartido al que se desea acceder (`shared` en la IP dada).|
+| `-U dylan`                      | Especifica el nombre de usuario con el que se desea autenticar (`dylan`).   |
+
 Tras obtener acceso a SMB usando el usuario `dylan`, se encuentra un archivo llamado `augustus.txt` con el siguiente hash:
 
 ```
@@ -164,6 +226,14 @@ Tras obtener acceso a SMB usando el usuario `dylan`, se encuentra un archivo lla
 ```bash
 hashcat -m 0 -a 0 hash.txt /usr/share/wordlists/rockyou.txt
 ```
+
+| Parte del Comando                            | Descripción                                                                 |
+|----------------------------------------------|-----------------------------------------------------------------------------|
+| `hashcat`                                     | Herramienta de fuerza bruta para crackear hashes.                          |
+| `-m 0`                                        | Especifica el tipo de hash: **MD5**.                                        |
+| `-a 0`                                        | Modo de ataque: **diccionario simple**.                                     |
+| `hash.txt`                                    | Archivo que contiene el hash a crackear.                                    |
+| `/usr/share/wordlists/rockyou.txt`           | Diccionario de contraseñas comunes a utilizar en el ataque.                 |
 
 Resultado:
 

